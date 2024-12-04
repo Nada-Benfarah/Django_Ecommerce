@@ -101,8 +101,16 @@ def add_to_cart(request):
     user = request.user
     product_id = request.GET.get('prod_id')
     product = Product.objects.get(id=product_id)
-    Cart(user=user, product=product).save()
+
+    cart_item, created = Cart.objects.get_or_create(user=user, product=product)
+    
+    if not created:
+        cart_item.quantity = cart_item.quantity + 1
+        cart_item.save()
+        cart_item.refresh_from_db() 
+    
     return redirect("/cart")
+
 
 
 def show_cart(request):

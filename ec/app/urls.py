@@ -38,6 +38,11 @@ urlpatterns = [
     path("pssword-reset-done/",auth_view.PasswordResetDoneView.as_view(template_name='app/password_reset_done.html',),name="password_reset_done"),
     path("password-reset-confirm/<uidb64>/<token>/",auth_view.PasswordResetConfirmView.as_view(template_name='app/password_reset_confirm.html',form_class=MySetPasswordForm),name="password_reset_confirm"),
     path("password-reset-complete/",auth_view.PasswordResetCompleteView.as_view(template_name='app/password_reset_complete.html'),name="password_reset_complete"),
+    
+    path('create-checkout-session/', views.create_checkout_session, name='create-checkout-session'),
+    path('success/', views.success, name='success'),
+    path('cancel/', views.cancel, name='cancel'),
+
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

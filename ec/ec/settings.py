@@ -80,6 +80,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+STRIPE_TEST_PUBLIC_KEY = 'pk_test_51QSOrH2KqxPvFiB2ddnYZigmq5AvpT9hMao3pMuFsDaKWGd4Ua6tfftwgcMsgkk6sCOeN0LVOOXcjunGWyiEHVPF008yS8YxZG'
+STRIPE_TEST_SECRET_KEY = 'sk_test_51QSOrH2KqxPvFiB2FsaaMtwy53Rih3T8g3E1Cb9DMRgTobGQ8H2OtNeHkBiqKOtyq60fMdSSHRleqMvrakqVA9KU00QiyCZuos'
 
 
 # Password validation

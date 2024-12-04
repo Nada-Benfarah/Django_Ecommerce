@@ -7,6 +7,13 @@ from .forms import CustomerRegisterationForm, CustomerProfileForm
 from django.contrib import messages
 from django.db.models import Q
 from django.db.models import Sum, F
+import stripe
+from django.conf import settings
+
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
+
+# Set the domain for redirection
+YOUR_DOMAIN = 'http://localhost:8000'
 
 # Create your views here.
 
@@ -124,6 +131,119 @@ def show_cart(request):
     totalamount = amount + 40
     return render(request, 'app/addtocart.html',locals())
 
+
+def create_checkout_session(request):
+    if request.method == "POST":
+        # Get the cart items for the logged-in user
+        user = request.user
+        cart_items = Cart.objects.filter(user=user)
+        
+        if not cart_items:
+            return JsonResponse({'error': 'Cart is empty'}, status=400)
+
+        line_items = []
+        total_amount = 0
+
+        for item in cart_items:
+            product = item.product 
+            quantity = item.quantity
+
+            total_product_price = item.total_cost  
+
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',  
+                    'product_data': {
+                        'name': product.title,  
+                    },
+                    'unit_amount': int(total_product_price * 100),  
+                },
+                'quantity': quantity, 
+            })
+            total_amount += total_product_price
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                line_items=line_items,  
+                mode='payment',  
+                success_url='http://localhost:8000/success/',  
+                cancel_url='http://localhost:8000/cancel/',  
+            )
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+        return redirect(checkout_session.url, code=303)
+
+    return redirect('cart')  
+    if request.method == "POST":
+        custid = request.POST.get('custid')
+        total_amount = request.POST.get('totamount')
+
+        cart_items = request.session.get('cart_items', [])  
+
+        line_items = []
+
+        for item in cart_items:
+            product = item['product']  
+            quantity = item['quantity']
+
+            product_price = product.discounted_price  
+            total_product_price = float(product_price) * quantity  
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd', 
+                    'product_data': {
+                        'name': product.title, 
+                    },
+                    'unit_amount': int(total_product_price * 100),  
+                },
+                'quantity': quantity,  
+            })
+
+        if not line_items:
+            return JsonResponse({'error': 'No items found in cart'}, status=400)
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                line_items=line_items,  # Pass the line items list here
+                mode='payment',  # Set mode to 'payment' for one-time payments
+                success_url='http://localhost:8000/success/',  # Adjust URLs as needed
+                cancel_url='http://localhost:8000/cancel/',
+            )
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+        return redirect(checkout_session.url, code=303)
+
+    return redirect('cart')  
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': 'Sample Product',
+                            },
+                            'unit_amount': int(total_amount) * 100,  
+                        },
+                        'quantity': 1,
+                    },
+                ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success/',
+            cancel_url=YOUR_DOMAIN + '/cancel/',
+        )
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+    return redirect(checkout_session.url, code=303)
+
+def success(request):
+    return render(request, 'success.html')
+
+def cancel(request):
+    return render(request, 'cancel.html')
 
 
 class checkout(View):

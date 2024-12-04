@@ -6,6 +6,7 @@ from .models import Cart, Customer, Product
 from .forms import CustomerRegisterationForm, CustomerProfileForm
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models import Sum, F
 
 # Create your views here.
 
@@ -140,26 +141,30 @@ class checkout(View):
 
 
 def plus_cart(request):
-    if request.method == 'GET':
-        prod_id = request.GET['prod_id']
-        c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
-        c.quantity += 1
-        c.save()
-        user = request.user
-        amount = 0.0
-        cart = Cart.objects.filter(user=user)
-        for p in cart:
-            value = (p.quantity * p.product.discounted_price)
-            amount = amount + value
-        totalamount = amount + 40
+    user = request.user
+    product_id = request.GET.get('prod_id')
+    product = Product.objects.get(id=product_id)
 
-        data = {
-            'quantity': c.quantity,
-            'amount': amount,
-            'totalamount': totalamount
-        }
-        return JsonResponse(data)
+    cart_item, created = Cart.objects.get_or_create(user=user, product=product)
     
+    cart_item.quantity += 1
+    cart_item.save()
+
+    amount = Cart.objects.filter(user=user).annotate(
+        total_value=F('quantity') * F('product__discounted_price')
+    ).aggregate(total=Sum('total_value'))['total'] or 0
+
+    shipping = 40.00
+    totalamount = amount + shipping
+
+    data = {
+        'quantity': cart_item.quantity,
+        'amount': amount,
+        'totalamount': totalamount
+    }
+
+    return JsonResponse(data)
+
 
 def minus_cart(request):
     if request.method == 'GET':

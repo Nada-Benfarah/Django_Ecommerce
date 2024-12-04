@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <a href="{% url 'checkout' %}" class="remove-cart btn btn-sm btn-secondary mr-3" pid={{item.product.id}}>Remove item</a>
-                                        <p class="mb-0"><span><strong>RS. {{item.product.discounted_price}}</strong></span></p>
+                                        <p class="mb-0"><span><strong>TND. {{item.product.discounted_price}}</strong></span></p>
                                     </div>
                                 </div>
                             </div>
@@ -61,4 +61,6 @@
         {% endif %}
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
 {% endblock main-content %}

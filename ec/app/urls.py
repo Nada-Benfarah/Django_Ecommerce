@@ -22,7 +22,7 @@ urlpatterns = [
     path("checkout/",views.checkout.as_view(),name="checkout"),
 
 
-    path("pluscart/",views.plus_cart),
+    path("pluscart/",views.plus_cart,name="pluscart"),
     path("minuscart/",views.minus_cart),
     path("removecart/",views.remove_cart),
 

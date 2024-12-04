@@ -33,7 +33,7 @@ $('.plus-cart').click(function(){
         },
         success:function(data){
             eml.innerText=data.quantity 
-            document.getElementById("amount").innerText=data.amount 
+            document.getElementById("amount").innerText='TND.'+data.amount 
             document.getElementById("totalamount").innerText=data.totalamount
         }
     })
@@ -50,7 +50,7 @@ $('.minus-cart').click(function(){
         },
         success:function(data){
             eml.innerText=data.quantity 
-            document.getElementById("amount").innerText=data.amount 
+            document.getElementById("amount").innerText='TND.'+data.amount 
             document.getElementById("totalamount").innerText=data.totalamount
         }
     })
@@ -67,7 +67,7 @@ $('.remove-cart').click(function(){
             prod_id:id
         },
         success:function(data){
-            document.getElementById("amount").innerText=data.amount 
+            document.getElementById("amount").innerText='TND.'+data.amount 
             document.getElementById("totalamount").innerText=data.totalamount
             eml.parentNode.parentNode.parentNode.parentNode.remove() 
         }

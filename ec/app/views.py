@@ -178,7 +178,7 @@ def create_checkout_session(request):
             checkout_session = stripe.checkout.Session.create(
                 line_items=line_items,
                 mode='payment',
-                success_url='http://localhost:8000/success/',
+                success_url='http://localhost:8000/',
                 cancel_url='http://localhost:8000/cancel/',
             )
         except Exception as e:

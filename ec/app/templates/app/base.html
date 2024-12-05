@@ -113,10 +113,10 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Cart 4</a>
+            <a class="nav-link text-white" href="{% url 'showcart' %}">Cart</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="#">Wishlist 4</a>
+            <a class="nav-link text-white" href="{% url 'logout' %}">Wishlist</a>
           </li>
          {% else %}
           <li class="nav-item">
@@ -157,4 +157,6 @@
     <script src="{% static 'app/js/myscript.js' %}"></script>
     <script src="{% static 'app/js/all.min.js' %}"></script>
   </body>
+   
+
 </html>
